@@ -98,7 +98,7 @@ Function Update-FileDates {
         $aufnahmeDatum = [dateTime]::ParseExact($dateStringToParse, $DateTimeFormat, $null)
         Set-ItemProperty -Path $path -Name LastWriteTime -Value $aufnahmeDatum
         Set-ItemProperty -Path $path -Name CreationTime -Value $aufnahmeDatum
-        Write-Host $_.Name + ", Aufnahmedatum: " + $aufnahmeDatum 
+        Write-Host $_.Name, - Aufnahmedatum: $aufnahmeDatum 
     }
 }
 
