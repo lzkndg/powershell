@@ -6,7 +6,7 @@
     Use: .\Update-FileDates <Folder-Path>
 #>
 
-$dateProperty = 'Aufnahmedatum'
+$dateProperty = 'Medium erstellt'
 $DateTimeFormat = "dd.MM.yyyy HH:mm"
 
 function Get-FileMetaData {
@@ -92,18 +92,22 @@ function Get-FileMetaData {
 Function Update-FileDates {
     Process {
         $path = $_.DirectoryName + '\' + $_.Name
-        Write-Host -NoNewLine "Processing" $_.Name "- "
+        Write-Host "Processing " $path
         $fileMetaData = $_ | Get-FileMetaData
+
         # --> Remove ANYTHING BUT digits (0-9), dots, colons or Spaces from the DateTime-String. Add more Characters to Regex if needed
+        $dateStringToParse = $fileMetaData.Aufnahmedatum -replace '[^0-9.: ]'
+        
         try {
-            $dateStringToParse = $fileMetaData.Aufnahmedatum -replace '[^0-9.: ]'
             $aufnahmeDatum = [dateTime]::ParseExact($dateStringToParse, $DateTimeFormat, $null)
             Set-ItemProperty -Path $path -Name LastWriteTime -Value $aufnahmeDatum
             Set-ItemProperty -Path $path -Name CreationTime -Value $aufnahmeDatum
             Write-Host $_.Name, - Aufnahmedatum: $aufnahmeDatum 
-        } catch { 
-            Write-Output "Ungültiges Datum, nichts geändert." -ErrorAction Stop
+        } 
+        catch {
+            Write-Output "Ungültiges Datum, nichts geändert."
         }
+        
 
     }
 }
